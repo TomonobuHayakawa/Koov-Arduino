@@ -10,6 +10,9 @@
 #ifndef _KOOV_CONTROL_H_
 #define _KOOV_CONTROL_H_
 
+/* Spr-Koov (Arduino Shield for Koov) version */
+#define SPR_KOOV_VER	2
+
 #include <Arduino.h>
 #include <Servo.h>
 #include <MMA8653.h>
@@ -17,25 +20,39 @@
 /****************************************************************************
  * definitions
  ****************************************************************************/
+#if (SPR_KOOV_VER == 1)
 #define PWM0_PIN PIN_D03
 #define PWM1_PIN PIN_D05
 #define PWM2_PIN PIN_D06
 #define PWM3_PIN PIN_D09
+#else // (SPR_KOOV_VER == 2)
+#define PWM0_PIN PIN_D03
+#define PWM1_PIN PIN_D05
+#endif
 
 enum KoovServo {
   KoovServo0 = PWM0_PIN,
   KoovServo1 = PWM1_PIN,
+#if (SPR_KOOV_VER == 1)
   KoovServo2 = PWM2_PIN,
   KoovServo3 = PWM3_PIN
+#endif
 };
 
 enum KoovOut {
+#if (SPR_KOOV_VER == 1)
   KoovOut0 = PIN_D00,
   KoovOut1 = PIN_D01,
   KoovOut2 = PIN_D02,
   KoovOut3 = PIN_D04,
   KoovOut4 = PIN_D07,
   KoovOut5 = PIN_D08
+#else // (SPR_KOOV_VER == 2)
+  KoovOut0 = PIN_D02,
+  KoovOut1 = PIN_D04,
+  KoovOut2 = PIN_D07,
+  KoovOut3 = PIN_D08
+#endif
 };
 
 enum KoovInSlow {
@@ -82,7 +99,10 @@ public:
   void front(uint8_t);
   void back(uint8_t);
   void stop();
+
+#if (SPR_KOOV_VER == 1)
   void slow();
+#endif
 
 private:
   uint8_t pin0;
@@ -109,7 +129,7 @@ public:
   bool motorSpeed(KoovMotor,int);
   bool motorStart(KoovMotor,bool);
   bool motorStart(KoovMotor,bool,int);
-  bool motorStop(KoovMotor,bool);
+  bool motorStop(KoovMotor,bool slow = false);
 
   int  light(KoovIn);
   int  light(KoovInSlow);

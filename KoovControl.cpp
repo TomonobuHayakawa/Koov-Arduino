@@ -8,9 +8,13 @@
  * Included Files
  ****************************************************************************/
 #include "KoovControl.h"
+
+
+/****************************************************************************
+ * This class for Spr-Koov (Arduino Shield for Koov) version 1.0
+  ****************************************************************************/
+#if (SPR_KOOV_VER == 1)
 #include <SoftPWM.h>
-
-
 /****************************************************************************
  * Koov Motor Class methods
  ****************************************************************************/
@@ -64,26 +68,88 @@ void KoovMotorClass::slow()
 }
 
 /****************************************************************************
+ * This class for Spr-Koov (Arduino Shield for Koov) leatest version
+  ****************************************************************************/
+#else // (SPR_KOOV_VER == 2)
+void KoovMotorClass::begin()
+{
+  speed = 255;
+
+  pinMode(pin0, OUTPUT);    // sets the digital pin as output for enable on motor0.
+  pinMode(pin1, OUTPUT);    // sets the digital pin as output for phase on motor0.
+
+}
+
+void KoovMotorClass::set(uint8_t sp)
+{
+  speed = sp;
+}
+
+void KoovMotorClass::front(uint8_t sp)
+{
+  speed = sp;
+  front();
+}
+
+void KoovMotorClass::back(uint8_t sp)
+{
+  speed = sp;
+  back();
+}
+
+void KoovMotorClass::front()
+{
+  digitalWrite(pin1, HIGH);
+  analogWrite(pin0, speed);
+}
+
+void KoovMotorClass::back()
+{
+  digitalWrite(pin1, LOW);
+  analogWrite(pin0, speed);
+}
+
+void KoovMotorClass::stop()
+{
+  analogWrite(pin0, 0);
+  analogWrite(pin1, 0);
+}
+
+#endif
+
+
+/****************************************************************************
  * begin on Koov Class
  ****************************************************************************/
 void KoovClass::begin()
 {
+
   servo0.attach(PWM0_PIN);
   servo1.attach(PWM1_PIN);
+#if (SPR_KOOV_VER == 1)
   servo2.attach(PWM2_PIN);
   servo3.attach(PWM3_PIN);
+#endif
 
   pinMode(KoovOut0, OUTPUT);
   pinMode(KoovOut1, OUTPUT);
   pinMode(KoovOut2, OUTPUT);
   pinMode(KoovOut3, OUTPUT);
+#if (SPR_KOOV_VER == 1)
   pinMode(KoovOut4, OUTPUT);
   pinMode(KoovOut5, OUTPUT);
+#endif
 
+#if (SPR_KOOV_VER == 1)
   SoftPWMBegin();
-
   motor0 = new KoovMotorClass(PIN_D10,PIN_D11);
   motor1 = new KoovMotorClass(PIN_D12,PIN_D13);
+#else // (SPR_KOOV_VER == 2)
+  pinMode(11, OUTPUT);    // sets the digital pin 11 as output for driver mode.
+  digitalWrite(11, HIGH);  // set p/e mode
+  motor0 = new KoovMotorClass(PIN_D09,PIN_D13);
+  motor1 = new KoovMotorClass(PIN_D06,PIN_D12);
+#endif
 
   motor0->begin();
   motor1->begin();
@@ -97,12 +163,18 @@ void KoovClass::begin()
 
 }
 
+/****************************************************************************
+ * end on Koov Class
+ ****************************************************************************/
 void KoovClass::end()
 {
   delete motor0;
   delete motor1;
 }
 
+/****************************************************************************
+ * Servo on Koov Class
+ ****************************************************************************/
 bool KoovClass::servo(KoovServo no,int deg)
 {
   if((deg<0) && (deg>180)) return false;
@@ -114,12 +186,14 @@ bool KoovClass::servo(KoovServo no,int deg)
     case KoovServo1:
       servo1.write(deg);
       break;
+#if (SPR_KOOV_VER == 1)
     case KoovServo2:
       servo2.write(deg);
       break;
     case KoovServo3:
       servo3.write(deg);
       break;
+#endif
     default:
       return false;
   }
@@ -128,6 +202,9 @@ bool KoovClass::servo(KoovServo no,int deg)
 
 }
 
+/****************************************************************************
+ * LED on Koov Class
+ ****************************************************************************/
 void KoovClass::led(KoovOut no, bool val)
 {
   val ? digitalWrite(no, HIGH) : digitalWrite(no, LOW);
@@ -195,12 +272,24 @@ bool KoovClass::motorStart(KoovMotor no, bool dist, int speed)
 bool KoovClass::motorStop(KoovMotor no, bool slow)
 {
 
-  switch(no){
+#if (SPR_KOOV_VER != 1)
+    (void) slow;
+#endif
+
+switch(no){
     case KoovMotor0:
+#if (SPR_KOOV_VER == 1)
       slow ? motor0->slow() : motor0->stop();
+#else // (SPR_KOOV_VER == 2)
+      motor0->stop();
+#endif
       break;
     case KoovMotor1:
+#if (SPR_KOOV_VER == 1)
       slow ? motor1->slow() : motor1->stop();
+#else // (SPR_KOOV_VER == 2)
+      motor1->stop();
+#endif
       break;
     default:
       return false;

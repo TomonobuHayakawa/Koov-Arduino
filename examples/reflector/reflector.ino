@@ -21,8 +21,10 @@ void setup() {
 void loop() {
   /* put your main code here, to run repeatedly: */
 
-  int val = Koov.reflector(KoovInSlow0);
-  printf("reflector = %d\n", val);
+  int val0 = Koov.reflector(KoovInSlow0);
+  int val1 = Koov.reflector(KoovInSlow1);
+  printf("reflector0 = %d\n", val0);
+  printf("reflector1 = %d\n", val1);
 
   /* sleep 1s */
   sleep(1);

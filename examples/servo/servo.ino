@@ -23,18 +23,21 @@ void loop() {
 
   /* Set the servo motor angle to 90 degrees */
   Koov.servo(KoovServo0,90);
+  Koov.servo(KoovServo1,90);
 
   /* sleep 1s */
   sleep(1);
 
   /* Set the servo motor angle to 0 degrees */
   Koov.servo(KoovServo0,0);
+  Koov.servo(KoovServo1,0);
 
   /* sleep 1s */
   sleep(1);
 
   /* Set the servo motor angle to 180 degrees */
   Koov.servo(KoovServo0,180);
+  Koov.servo(KoovServo1,180);
 
   /* sleep 1s */
   sleep(1);
