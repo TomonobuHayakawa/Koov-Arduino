@@ -77,6 +77,8 @@ void KoovMotorClass::begin()
 
   pinMode(pin0, OUTPUT);    // sets the digital pin as output for enable on motor0.
   pinMode(pin1, OUTPUT);    // sets the digital pin as output for phase on motor0.
+  digitalWrite(pin0, LOW);
+  digitalWrite(pin1, LOW);
 
 }
 
@@ -135,9 +137,16 @@ void KoovClass::begin()
   pinMode(KoovOut1, OUTPUT);
   pinMode(KoovOut2, OUTPUT);
   pinMode(KoovOut3, OUTPUT);
+  digitalWrite(KoovOut0, LOW);
+  digitalWrite(KoovOut1, LOW);
+  digitalWrite(KoovOut2, LOW);
+  digitalWrite(KoovOut3, LOW);
+
 #if (SPR_KOOV_VER == 1)
   pinMode(KoovOut4, OUTPUT);
   pinMode(KoovOut5, OUTPUT);
+  digitalWrite(KoovOut4, LOW);
+  digitalWrite(KoovOut5, LOW);
 #endif
 
 #if (SPR_KOOV_VER == 1)
